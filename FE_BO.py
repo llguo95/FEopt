@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import GPy
 
-# import torch
 from torch.quasirandom import SobolEngine
 
 from emukit.model_wrappers.gpy_model_wrappers import GPyModelWrapper
@@ -13,13 +12,14 @@ from emukit.bayesian_optimization.acquisitions import ExpectedImprovement
 from emukit.core.optimization import GradientAcquisitionOptimizer
 from emukit.core import ParameterSpace, ContinuousParameter
 
-from augmented_functions import AugmentedAckley, AugmentedSquare
+import os
+
+import pickle
 
 from scipy.stats.qmc import Sobol
 
 from sklearn.preprocessing import StandardScaler
 
-# torch.random.manual_seed(123)
 np.random.seed(123)
 
 def scale_to_orig(x, bds):
@@ -34,15 +34,20 @@ def scale_to_orig(x, bds):
 ### 1.2 Define objective function
 
 def objective_function(x: np.ndarray) -> np.ndarray:
-    # x = torch.tensor(np.hstack((x, 1 * np.ones(x.shape))))
-    # f = obj(dim=dim + 1, negate=False)
-    # return f(x).detach().numpy()[:, None]
-    return np.sum(x ** 2, axis=1)[:, None]
+    input_file = open('input.pkl', 'wb')
+    pickle.dump(x, input_file)
+    input_file.close()
 
-# obj = AugmentedAckley
+    cmdl = 'python scratch.py'
+    os.system(cmdl)
+
+    output_file = open('output.pkl', 'rb')
+    res = pickle.load(output_file)
+    output_file.close()
+
+    return res  # np.sum(x ** 2, axis=1)[:, None]
+
 dim = 1
-# bds = obj(dim=dim + 1, negate=False)._bounds[:-1]
-# bds = [(-20, 30) for _ in range(dim)] + [(0, 1)]
 bds = [(-5, 10) for _ in range(dim)]
 
 ### 1.3 Initial data
@@ -51,7 +56,6 @@ bds = [(-5, 10) for _ in range(dim)]
 sobolsamp = Sobol(d=dim, scramble=False)
 
 n_DoE = 4
-# X = scale_to_orig(soboleng.draw(5).numpy())
 X = scale_to_orig(sobolsamp.random(n_DoE), bds)
 Y = objective_function(X)
 
