@@ -30,8 +30,8 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     res = np.array(float(out_content))
     return res
 
-if not os.path.exists('wirebond_sweep'):
-    copy_tree('../wirebond_files', 'wirebond_sweep')
+# if not os.path.exists('wirebond_sweep'):
+#     copy_tree('../wirebond_files', 'wirebond_sweep')
 
 sobolsamp = Sobol(d=2, scramble=False)
 
