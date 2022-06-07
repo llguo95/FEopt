@@ -18,7 +18,7 @@ def scale_to_orig(x, bds):
 
 def objective_function(x: np.ndarray) -> np.ndarray:
     in_content = open('wirebond_sweep/01_Geometric_Inputs.txt', 'r+').read()
-    new_in_content = 'Wthk = ' + str(x[0]) + '\n\nFL = ' + str(x[1]) + '\n\n' + in_content[in_content.index("! Total number of layers in an IGBT"):]
+    new_in_content = 'WThk = ' + str(x[0]) + '\n\nFL = ' + str(x[1]) + '\n\n' + in_content[in_content.index("! Total number of layers in an IGBT"):]
     text_file = open('wirebond_sweep/01_Geometric_Inputs.txt', 'r+')
     text_file.write(new_in_content)
     text_file.close()
@@ -38,7 +38,7 @@ sobolsamp = Sobol(d=2, scramble=False)
 bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 
 n_DoE = 256
-X = scale_to_orig(sobolsamp.random(n_DoE), bds)
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)
 
 df = pd.DataFrame(X)
 df.to_csv('input.csv')
