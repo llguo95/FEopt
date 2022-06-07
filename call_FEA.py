@@ -8,7 +8,8 @@ x = pickle.load(input_file)
 input_file.close()
 
 def f(x):
-    res = np.sum(x ** 2, axis=1)[:, None]
+    # res = np.sum(x ** 2, axis=1)[:, None]
+    res = - np.prod(np.sin(x) * np.sqrt(x), axis=1)[:, None]
     return res
 
 # Prepare output file, write output
