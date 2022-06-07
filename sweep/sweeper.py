@@ -23,7 +23,7 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     text_file.write(new_in_content)
     text_file.close()
 
-    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_base" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_base/01_Geometric_Inputs.txt"'
+    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_sweep" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_sweep/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
     out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
