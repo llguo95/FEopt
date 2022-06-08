@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import GPy
 import pandas as pd
 
-from torch.quasirandom import SobolEngine
+# from torch.quasirandom import SobolEngine
 
 from emukit.model_wrappers.gpy_model_wrappers import GPyModelWrapper
 from emukit.bayesian_optimization.acquisitions import ExpectedImprovement
@@ -73,7 +73,7 @@ bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 sobolsamp = Sobol(d=dim, scramble=False)
 
 n_DoE = 16
-X = scale_to_orig(sobolsamp.random(n_DoE), bds)
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)
 # Y = np.array([objective_function(x) for x in X])[:, None]
 Y = []
 for i, x in enumerate(X):
