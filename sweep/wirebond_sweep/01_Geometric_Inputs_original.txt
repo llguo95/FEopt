@@ -1,6 +1,13 @@
-WThk = 0.319375
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Geometric Inputs!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-FL = 0.80625
+!Wire Thickness
+WThk = 0.3          !Wire thickness can be varied for this model from 0.1 to 0.49 i.e. 100 to 490 micrometers
+ 
+!Foot Length 
+FL = 1				!Foot length can be varied for this model from 0.5 to 1.2 i.e. 500 to 1200 micrometers 
+ 
 
 ! Total number of layers in an IGBT
 LayerCount=8

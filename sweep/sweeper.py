@@ -3,7 +3,6 @@ import os
 import pandas as pd
 
 import numpy as np
-from distutils.dir_util import copy_tree
 
 from scipy.stats.qmc import Sobol
 
@@ -17,9 +16,9 @@ def scale_to_orig(x, bds):
     return res
 
 def objective_function(x: np.ndarray) -> np.ndarray:
-    in_content = open('wirebond_sweep/01_Geometric_Inputs.txt', 'r+').read()
+    in_content = open('wirebond_sweep/01_Geometric_Inputs_original.txt', 'r').read()
     new_in_content = 'WThk = ' + str(x[0]) + '\n\nFL = ' + str(x[1]) + '\n\n' + in_content[in_content.index("! Total number of layers in an IGBT"):]
-    text_file = open('wirebond_sweep/01_Geometric_Inputs.txt', 'r+')
+    text_file = open('wirebond_sweep/01_Geometric_Inputs.txt', 'w')
     text_file.write(new_in_content)
     text_file.close()
 
@@ -29,9 +28,6 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
     res = np.array(float(out_content))
     return res
-
-# if not os.path.exists('wirebond_sweep'):
-#     copy_tree('../wirebond_files', 'wirebond_sweep')
 
 sobolsamp = Sobol(d=2, scramble=False)
 
