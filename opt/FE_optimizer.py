@@ -58,7 +58,7 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_opt" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_opt/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
-    out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
+    out_content = open('wirebond_opt/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
     res = np.array(float(out_content))
     return res
 
