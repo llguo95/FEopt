@@ -55,7 +55,7 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     text_file.write(new_in_content)
     text_file.close()
 
-    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_sweep" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_sweep/01_Geometric_Inputs_original.txt"'
+    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_opt" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_opt/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
     out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
@@ -64,8 +64,8 @@ def objective_function(x: np.ndarray) -> np.ndarray:
 
 dim = 2
 # bds = [(0, 10) for _ in range(dim)]
-# bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
-bds = [(-0.1, 0.49), (-0.5, 1.2)] # [WThk, FL]
+bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
+# bds = [(-0.1, 0.49), (-0.5, 1.2)] # [WThk, FL]
 
 ### 1.3 Initial data
 
