@@ -34,7 +34,7 @@ sobolsamp = Sobol(d=2, scramble=False)
 bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 
 n_DoE = 256
-X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 8)[47:]
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 8)[48:]
 # print(X)
 
 df = pd.DataFrame(X)
