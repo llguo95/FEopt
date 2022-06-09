@@ -132,7 +132,8 @@ def BO_loop(X_scaled, Y_scaled):
     ei_acquisition = ExpectedImprovement(emukit_model, jitter=0)
     # ei_list = ei_acquisition.evaluate(test_x_list_scaled)
 
-    x_new_scaled, _ = np.round(optimizer.optimize(ei_acquisition), 8)
+    x_new_scaled, _ = optimizer.optimize(ei_acquisition)
+    x_new_scaled = np.round(x_new_scaled, 8)
     y_new = np.array([objective_function(scaler_X.inverse_transform(x_new_scaled)[0])])[:, None]
 
     X_scaled = np.append(X_scaled, x_new_scaled, axis=0)
