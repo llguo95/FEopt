@@ -73,7 +73,7 @@ bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 sobolsamp = Sobol(d=dim, scramble=False)
 
 n_DoE = 16
-X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 8)
 # Y = np.array([objective_function(x) for x in X])[:, None]
 Y = []
 for i, x in enumerate(X):
@@ -132,7 +132,7 @@ def BO_loop(X_scaled, Y_scaled):
     ei_acquisition = ExpectedImprovement(emukit_model, jitter=0)
     # ei_list = ei_acquisition.evaluate(test_x_list_scaled)
 
-    x_new_scaled, _ = optimizer.optimize(ei_acquisition)
+    x_new_scaled, _ = np.round(optimizer.optimize(ei_acquisition), 8)
     y_new = np.array([objective_function(scaler_X.inverse_transform(x_new_scaled)[0])])[:, None]
 
     X_scaled = np.append(X_scaled, x_new_scaled, axis=0)
