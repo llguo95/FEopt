@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import GPy
 import pandas as pd
 
-from torch.quasirandom import SobolEngine
+# from torch.quasirandom import SobolEngine
 
 from emukit.model_wrappers.gpy_model_wrappers import GPyModelWrapper
 from emukit.bayesian_optimization.acquisitions import ExpectedImprovement
@@ -58,7 +58,7 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_opt" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_opt/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
-    out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
+    out_content = open('wirebond_opt/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
     res = np.array(float(out_content))
     return res
 
@@ -73,7 +73,7 @@ bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 sobolsamp = Sobol(d=dim, scramble=False)
 
 n_DoE = 16
-X = scale_to_orig(sobolsamp.random(n_DoE), bds)
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)
 # Y = np.array([objective_function(x) for x in X])[:, None]
 Y = []
 for i, x in enumerate(X):
