@@ -34,10 +34,11 @@ sobolsamp = Sobol(d=2, scramble=False)
 bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 
 n_DoE = 256
-X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)
+X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 10)[47:]
+# print(X)
 
 df = pd.DataFrame(X)
-df.to_csv('input.csv')
+# df.to_csv('input.csv')
 
 input_output_lines = []
 for i, x in enumerate(X):
