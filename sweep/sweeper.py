@@ -25,8 +25,12 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_sweep" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_sweep/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
-    out_content = open('wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
-    res = np.array(float(out_content))
+    out_path = 'wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt'
+    if os.path.exists(out_path):
+        out_content = open(out_path, 'rb').read()
+        res = np.array(float(out_content))
+    else:
+        res = np.nan
     return res
 
 sobolsamp = Sobol(d=2, scramble=False)
