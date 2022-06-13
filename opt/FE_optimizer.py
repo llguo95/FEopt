@@ -13,6 +13,8 @@ from emukit.bayesian_optimization.acquisitions import ExpectedImprovement
 from emukit.core.optimization import GradientAcquisitionOptimizer
 from emukit.core import ParameterSpace, ContinuousParameter
 
+import joblib
+
 import os
 
 import pickle
@@ -55,26 +57,34 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     text_file.write(new_in_content)
     text_file.close()
 
-    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_opt" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_opt/01_Geometric_Inputs.txt"'
-    os.system(cmdl)
+    out_path = 'wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt'
+    if os.path.exists(out_path):
+        out_content = open(out_path, 'rb').read()
+        res = np.array(float(out_content))
+    else:
+        print('Simulation with WThk = ' + str(x[0]) + ', FL = ' + str(x[1]) + ' failed. Calling surrogate.')
+        m_load = GPy.models.GPRegression(X_scaled, Y_scaled)
+        m_load.update_model(False)  # do not call the underlying expensive algebra on load
+        m_load.initialize_parameter()  # Initialize the parameters (connect the parameters up)
+        m_load[:] = np.load('../sweep/gpy_model.npy', allow_pickle=True)  # Load the parameters
+        m_load.update_model(True)  # Call the algebra only once
 
-    out_content = open('wirebond_opt/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt', 'rb').read()
-    res = np.array(float(out_content))
+        scaler_X_load = joblib.load('../sweep/scaler_X.gz')
+        scaler_Y_load = joblib.load('../sweep/scaler_Y.gz')
+        mean_scaled, _ = m_load.predict(scaler_X_load.transform(x))
+
+        res = scaler_Y_load.inverse_transform(mean_scaled)
     return res
 
 dim = 2
-# bds = [(0, 10) for _ in range(dim)]
 bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
-# bds = [(-0.1, 0.49), (-0.5, 1.2)] # [WThk, FL]
 
 ### 1.3 Initial data
 
-# soboleng = SobolEngine(dimension=dim)#, scramble=True)
 sobolsamp = Sobol(d=dim, scramble=False)
 
-n_DoE = 16
+n_DoE = 4
 X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 8)
-# Y = np.array([objective_function(x) for x in X])[:, None]
 Y = []
 for i, x in enumerate(X):
     Y.append(objective_function(x))
@@ -133,8 +143,11 @@ def BO_loop(X_scaled, Y_scaled):
     # ei_list = ei_acquisition.evaluate(test_x_list_scaled)
 
     x_new_scaled, _ = optimizer.optimize(ei_acquisition)
-    x_new_scaled = np.round(x_new_scaled, 8)
-    y_new = np.array([objective_function(scaler_X.inverse_transform(x_new_scaled)[0])])[:, None]
+    y_new = np.array(
+        [objective_function(
+            np.round(scaler_X.inverse_transform(x_new_scaled)[0], 8)
+        )]
+    )[:, None]
 
     X_scaled = np.append(X_scaled, x_new_scaled, axis=0)
     Y_scaled = np.append(Y_scaled, scaler_Y.transform(y_new), axis=0)

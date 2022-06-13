@@ -7,3 +7,11 @@
 # content = open('wirebond_sweep/Max_Strain_0.3_1.0.txt', 'r+').read()
 # # i = content.index('EPS_max')
 # print(float(content))
+
+import pandas as pd
+df1 = pd.read_csv('input_output_part1.csv')
+df2 = pd.read_csv('input_output_part2.csv')
+
+df = pd.concat((df1, df2), ignore_index=True)
+
+df[['WThk', 'FL', 'EPS_max']].to_csv('input_output.csv', index=False)
