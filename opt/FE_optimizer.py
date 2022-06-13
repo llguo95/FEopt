@@ -57,7 +57,7 @@ def objective_function(x: np.ndarray) -> np.ndarray:
     text_file.write(new_in_content)
     text_file.close()
 
-    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_sweep" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_sweep/01_Geometric_Inputs.txt"'
+    cmdl = '"ansys2019r3" -p ansys -dis -mpi INTELMPI -np 2 -lch -dir "wirebond_opt" -j "wirebond_tutorial" -s read -l en-us -b -i "wirebond_opt/01_Geometric_Inputs.txt"'
     os.system(cmdl)
 
     out_path = 'wirebond_sweep/Max_Strain_' + str(x[0]) + '_' + str(x[1]) + '.txt'
@@ -66,6 +66,9 @@ def objective_function(x: np.ndarray) -> np.ndarray:
         res = np.array(float(out_content))
     else:
         print('Simulation with WThk = ' + str(x[0]) + ', FL = ' + str(x[1]) + ' failed. Calling surrogate.')
+        X_scaled = joblib.load('../sweep/X_scaled.gz')
+        Y_scaled = joblib.load('../sweep/Y_scaled.gz')
+
         m_load = GPy.models.GPRegression(X_scaled, Y_scaled)
         m_load.update_model(False)  # do not call the underlying expensive algebra on load
         m_load.initialize_parameter()  # Initialize the parameters (connect the parameters up)
