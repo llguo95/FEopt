@@ -36,7 +36,9 @@ scaler_Y.fit(EPS_max)
 joblib.dump(scaler_Y, 'scaler_Y.gz')
 
 X_scaled = scaler_X.transform(x_train)
+joblib.dump(X_scaled, 'X_scaled.gz')
 Y_scaled = scaler_Y.transform(EPS_max)
+joblib.dump(Y_scaled, 'Y_scaled.gz')
 
 fig = plt.figure(num='Scatter plot')
 ax = fig.add_subplot(projection='3d')
@@ -52,15 +54,17 @@ gpy_model = GPy.models.GPRegression(X_scaled, Y_scaled, GPy.kern.RBF(2))
 # )
 
 gpy_model.optimize()
-np.save('gpy_model.npy', gpy_model.param_array)
+print(gpy_model)
 
-m_load = GPy.models.GPRegression(X_scaled, Y_scaled)
-m_load.update_model(False) # do not call the underlying expensive algebra on load
-m_load.initialize_parameter() # Initialize the parameters (connect the parameters up)
-m_load[:] = np.load('gpy_model.npy', allow_pickle=True) # Load the parameters
-m_load.update_model(True) # Call the algebra only once
+# np.save('gpy_model.npy', gpy_model.param_array)
+#
+# m_load = GPy.models.GPRegression(X_scaled, Y_scaled)
+# m_load.update_model(False) # do not call the underlying expensive algebra on load
+# m_load.initialize_parameter() # Initialize the parameters (connect the parameters up)
+# m_load[:] = np.load('gpy_model.npy', allow_pickle=True) # Load the parameters
+# m_load.update_model(True) # Call the algebra only once
 
-emukit_model = GPyModelWrapper(m_load)
+emukit_model = GPyModelWrapper(gpy_model)
 
 test_x_mesh, test_x_list = uniform_grid([0.1, 0.5], [0.49, 1.2], [50, 50], mesh=True)
 test_x_list_scaled = scaler_X.transform(test_x_list)
@@ -73,11 +77,25 @@ lcb_plot = scaler_Y.inverse_transform(mu_plot_scaled - 2 * np.sqrt(np.abs(var_pl
 ax.plot_surface(test_x_mesh[0], test_x_mesh[1], mu_plot.reshape(test_x_mesh[0].shape), alpha=.5, cmap='viridis')
 ax.plot_surface(test_x_mesh[0], test_x_mesh[1], ucb_plot.reshape(test_x_mesh[0].shape), alpha=.1, color='k')
 ax.plot_surface(test_x_mesh[0], test_x_mesh[1], lcb_plot.reshape(test_x_mesh[0].shape), alpha=.1, color='k')
+ax.set_xlabel('WTHk')
+ax.set_ylabel('FL')
+ax.set_zlabel('peak EPS')
+ax.scatter(*test_x_list[np.argmin(mu_plot)], np.amin(mu_plot), marker='*', c='r', s=200)
+plt.tight_layout()
 
-plt.figure(num='Contour plot')
-plt.contourf(test_x_mesh[0], test_x_mesh[1], mu_plot.reshape(test_x_mesh[0].shape), levels=100)
+fig2 = plt.figure(num='Contour plot')
+plt.contourf(test_x_mesh[0], test_x_mesh[1], mu_plot.reshape(test_x_mesh[0].shape), levels=100, cmap='viridis')
+plt.xlabel('WTHk')
+plt.ylabel('FL')
+plt.colorbar()
 
-plt.figure(num='cb contour plot')
-plt.contourf(test_x_mesh[0], test_x_mesh[1], (ucb_plot - mu_plot).reshape(test_x_mesh[0].shape), levels=100)
+plt.scatter(*test_x_list[np.argmin(mu_plot)], marker='*', c='r', s=200)
+
+plt.tight_layout()
+
+# plt.figure(num='cb contour plot')
+# plt.contourf(test_x_mesh[0], test_x_mesh[1], (ucb_plot - mu_plot).reshape(test_x_mesh[0].shape), levels=100)
+
+print(test_x_list[np.argmin(mu_plot)], np.amin(mu_plot))
 
 plt.show()
