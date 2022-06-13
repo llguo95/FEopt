@@ -77,9 +77,9 @@ def objective_function(x: np.ndarray) -> np.ndarray:
 
         scaler_X_load = joblib.load('../sweep/scaler_X.gz')
         scaler_Y_load = joblib.load('../sweep/scaler_Y.gz')
-        mean_scaled, _ = m_load.predict(scaler_X_load.transform(x))
+        mean_scaled, _ = m_load.predict(scaler_X_load.transform(x[None, :]))
 
-        res = scaler_Y_load.inverse_transform(mean_scaled)
+        res = scaler_Y_load.inverse_transform(mean_scaled).flatten()[0]
     return res
 
 dim = 2
@@ -89,7 +89,7 @@ bds = [(0.1, 0.49), (0.5, 1.2)] # [WThk, FL]
 
 sobolsamp = Sobol(d=dim, scramble=False)
 
-n_DoE = 4
+n_DoE = 16
 X = np.round(scale_to_orig(sobolsamp.random(n_DoE), bds), 8)
 Y = []
 for i, x in enumerate(X):
