@@ -63,4 +63,4 @@ for i, x in enumerate(X):
     input_output_line = np.hstack((x, y))
     input_output_lines.append(input_output_line)
     df_new = pd.DataFrame(input_output_lines, columns=['WThk', 'FL', 'EPS_max'])
-    df_new.to_csv('input_output_hf.csv')
+    df_new.to_csv('input_output_ms_' + str(MeshSize_XY) + '.csv')
