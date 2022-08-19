@@ -45,6 +45,7 @@ ax = fig.add_subplot(projection='3d')
 ax.scatter(WThk, FL, EPS_max)
 
 gpy_model = GPy.models.GPRegression(X_scaled, Y_scaled, GPy.kern.RBF(2))
+# gpy_model.Gaussian_noise.variance.fix(0)
 
 # gpy_model.likelihood.constrain_bounded(1e-10, 1)
 # gpy_model.likelihood.fix(1e-10)
