@@ -73,7 +73,7 @@ ESORT,ETAB,EPS_v
 
 
 *CFOPEN,Max_Strain_%WThk%_%FL%,txt
-*VWRITE,'EPS_max'
+!*VWRITE,'EPS_max'
 (A8)
 *VWRITE,EPS_max
 (E15.8)
